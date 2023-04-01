@@ -1,4 +1,10 @@
-import { LoginPage, RegisterPage, ResetPage } from "@pages";
+import {
+  LoginPage,
+  RecipesCreatePage,
+  RecipesPage,
+  RegisterPage,
+  ResetPage,
+} from "@pages";
 import App from "../App";
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
@@ -7,15 +13,33 @@ export const HOME_URL = "/";
 export const LOGIN_URL = "/login";
 export const REGISTER_URL = "/register";
 export const RESET_URL = "/reset";
+export const RECIPES_URL = "/recipes";
+export const RECIPES_CREATE_URL = "/recipes-create";
+
+const ROUTES = [
+  {
+    path: RECIPES_URL,
+    element: <RecipesPage />,
+    type: "private",
+  },
+  {
+    path: RECIPES_CREATE_URL,
+    element: <RecipesCreatePage />,
+    type: "private",
+  },
+];
 
 const routes: RouteObject[] = [
   {
     path: HOME_URL,
-    element: (
-      <PrivateRoute>
-        <App />
-      </PrivateRoute>
-    ),
+    element: <App />,
+    children: ROUTES.map(({ path, element, type }) => {
+      return {
+        path,
+        element:
+          type == "private" ? <PrivateRoute>{element}</PrivateRoute> : element,
+      };
+    }),
   },
   {
     path: LOGIN_URL,
