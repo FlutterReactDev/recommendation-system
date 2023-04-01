@@ -6,7 +6,7 @@ import {
   ResetPage,
 } from "@pages";
 import App from "../App";
-import { createBrowserRouter, RouteObject } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouteObject } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 
 export const HOME_URL = "/";
@@ -15,8 +15,12 @@ export const REGISTER_URL = "/register";
 export const RESET_URL = "/reset";
 export const RECIPES_URL = "/recipes";
 export const RECIPES_CREATE_URL = "/recipes-create";
-
+export const FAVORITE_URL = "/favorite";
 const ROUTES = [
+  {
+    path: HOME_URL,
+    element: <Navigate to={RECIPES_URL} />,
+  },
   {
     path: RECIPES_URL,
     element: <RecipesPage />,

@@ -12,16 +12,16 @@ import {
 import { FC, PropsWithChildren, useContext, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { FrameContext, FrameContextProps } from "@components/Frame/Frame";
-import HomeIcon from "@mui/icons-material/Home";
+import useAuthInfo from "@hooks/useAuthInfo";
 export interface PageProps {
   title: string;
 }
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+
 const Page: FC<PropsWithChildren<PageProps>> = (props) => {
   const { title, children } = props;
   const { handleDrawerToggle } = useContext<FrameContextProps>(FrameContext);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-
+  const { logout } = useAuthInfo();
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -75,11 +75,14 @@ const Page: FC<PropsWithChildren<PageProps>> = (props) => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem sx={{ px: 3 }} onClick={handleCloseUserMenu}>
+                <Typography textAlign="center" onClick={logout}>
+                  logout
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography textAlign="center"></Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
