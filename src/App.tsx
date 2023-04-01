@@ -1,11 +1,7 @@
-import {
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
+import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { Frame } from "@components";
 import { FC } from "react";
+import { Outlet } from "react-router-dom";
 
 const App: FC = () => {
   const navigation = (
@@ -19,9 +15,11 @@ const App: FC = () => {
       ))}
     </List>
   );
-  return <Frame navigation={navigation}>
-    
-  </Frame>;
+  return (
+    <Frame navigation={navigation}>
+      <Outlet />
+    </Frame>
+  );
 };
 
 export default App;
