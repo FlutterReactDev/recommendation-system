@@ -1,17 +1,27 @@
-import useAuthInfo from "@hooks/useAuthInfo";
-import { Divider } from "@mui/material";
-import { Button } from "@mui/material";
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
+import { Frame } from "@components";
+import { FC } from "react";
 
-const App = () => {
-  const { user, logout } = useAuthInfo();
-
-  return (
-    <div>
-      <Button onClick={logout} variant="contained">
-        Logout
-      </Button>
-    </div>
+const App: FC = () => {
+  const navigation = (
+    <List>
+      {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
+        <ListItem key={text} disablePadding>
+          <ListItemButton>
+            <ListItemText primary={text} />
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
   );
+  return <Frame navigation={navigation}>
+    
+  </Frame>;
 };
 
 export default App;
