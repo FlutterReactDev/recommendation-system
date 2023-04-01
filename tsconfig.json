@@ -27,7 +27,9 @@
       "@service": ["service/index.ts"],
       "@service/*": ["service/*"],
       "@fb": ["firebase.ts"],
-      "@hooks/*": ["hooks/*"]
+      "@hooks/*": ["hooks/*"],
+      "@components": ["components/index.ts"],
+      "@components/*": ["components/*"]
     }
   },
   "include": ["src"],
