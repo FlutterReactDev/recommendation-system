@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link, useNavigate } from "react-router-dom";
 import { FC, useState } from "react";
-import { Backdrop, MenuItem } from "@mui/material";
+import { Alert, Backdrop, MenuItem, Snackbar } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -16,6 +16,7 @@ import { container } from "tsyringe";
 import AuthService from "@service/auth";
 import { CircularProgress } from "@mui/material";
 import { HOME_URL } from "@router/router";
+import { FirebaseError } from "firebase/app";
 
 const REGISTER_FORM_SCHEMA = Yup.object({
   name: Yup.string().required().label("Name"),
@@ -33,6 +34,8 @@ export type RegisterFormData = Yup.InferType<typeof REGISTER_FORM_SCHEMA>;
 const RegisterPage: FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const {
     handleSubmit,
     control,
@@ -49,7 +52,10 @@ const RegisterPage: FC = () => {
       await authService.register(data);
       navigate(HOME_URL);
     } catch (e) {
-      console.log(e);
+      if (e instanceof FirebaseError) {
+        setError(true);
+        setErrorMessage(e.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -61,9 +67,12 @@ const RegisterPage: FC = () => {
 
     try {
       await authService.registerWithGoogle();
-     
       navigate(HOME_URL);
     } catch (e) {
+      if (e instanceof FirebaseError) {
+        setError(true);
+        setErrorMessage(e.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -71,6 +80,23 @@ const RegisterPage: FC = () => {
 
   return (
     <Container component="main" maxWidth="xs">
+      <Snackbar
+        open={error}
+        autoHideDuration={6000}
+        onClose={() => {
+          setError(false);
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setError(false);
+          }}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
       <Backdrop open={loading} sx={{ color: "#fff", zIndex: 99 }}>
         <CircularProgress color="primary" />
       </Backdrop>

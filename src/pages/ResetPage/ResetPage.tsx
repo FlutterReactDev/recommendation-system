@@ -18,7 +18,7 @@ import * as Yup from "yup";
 import { container } from "tsyringe";
 import AuthService from "@service/auth";
 import { Link } from "react-router-dom";
-import { HOME_URL, LOGIN_URL } from "@router/router";
+import { LOGIN_URL } from "@router/router";
 const RESET_FORM_DATA = Yup.object({
   email: Yup.string().email().required().label("E-mail"),
 });

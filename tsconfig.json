@@ -29,7 +29,11 @@
       "@fb": ["firebase.ts"],
       "@hooks/*": ["hooks/*"],
       "@components": ["components/index.ts"],
-      "@components/*": ["components/*"]
+      "@components/*": ["components/*"],
+      "@entities/*": ["entities/*"],
+      "@features/*": ["features/*"],
+      "@features": ["features/index.ts"],
+      "@utils": ["utils.ts"]
     }
   },
   "include": ["src"],

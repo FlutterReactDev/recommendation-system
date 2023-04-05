@@ -1,7 +1,8 @@
+import { UserEntity } from "@entities/UserEntity";
 import { db } from "@fb";
 import { LOGIN_URL } from "@router/router";
-import { getAuth, getIdToken, onAuthStateChanged, User } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, DocumentData, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 function getUserInfo() {
   const auth = getAuth();
 
-  const [user, setUser] = useState<User | null>();
+  const [user, setUser] = useState<UserEntity | DocumentData>();
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -17,10 +18,14 @@ function getUserInfo() {
     localStorage.removeItem("RS_TOKEN");
     navigate(LOGIN_URL);
   };
-
   useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser?.uid) {
+        await getDoc(doc(db, "users", currentUser?.uid)).then((user) => {
+          const userData = user.data();
+          setUser(userData);
+        });
+      }
     });
   }, []);
 

@@ -7,11 +7,18 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   getIdToken,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { RegisterFormData } from "@pages/RegisterPage/RegisterPage";
 import { LoginFormData } from "@pages/LoginPage/LoginPage";
 import { db } from "@fb";
-import { setDoc, doc } from "firebase/firestore";
+import {
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  DocumentData,
+} from "firebase/firestore";
 import { ResetFormData } from "@pages/ResetPage/ResetPage";
 
 class AuthService {
@@ -27,6 +34,7 @@ class AuthService {
           name,
           gender,
           age,
+          photoURL: null,
         });
 
         user
@@ -52,6 +60,7 @@ class AuthService {
     await signInWithPopup(auth, provider).then(({ user }) => {
       const userData = {
         name: user.displayName,
+        photoUrl: user.photoURL,
         gender: "",
         age: null,
       };
@@ -70,6 +79,27 @@ class AuthService {
     await sendPasswordResetEmail(auth, email).then(() => {
       console.log("Reset");
     });
+  }
+
+  addTags(tags: string[]) {
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser?.uid) {
+        await updateDoc(doc(db, "users", currentUser?.uid), {
+          tags,
+        });
+      }
+    });
+  }
+  async getUserTags() {
+    const auth = getAuth();
+    const uid = auth.currentUser?.uid;
+    const userRef = doc(db, `users/${uid}`);
+    const data: DocumentData | { tags: string[] } | undefined = (
+      await getDoc(userRef)
+    ).data();
+
+    return data?.tags;
   }
 }
 

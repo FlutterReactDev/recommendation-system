@@ -2,6 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
+import Typography from "@mui/material/Typography";
 import { createContext, useState } from "react";
 
 export interface FrameProps {
@@ -51,6 +52,15 @@ const Frame: React.FC<React.PropsWithChildren<FrameProps>> = (props) => {
             }}
           >
             {navigation}
+            <Typography
+              sx={{
+                mt: 3,
+              }}
+              paragraph
+              align="center"
+            >
+              ( ◑‿◑)ɔ┏🍟--🍔┑٩(^◡^ )
+            </Typography>
           </Drawer>
         </Box>
         {children}

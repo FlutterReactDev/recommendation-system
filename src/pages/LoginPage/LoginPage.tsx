@@ -9,12 +9,15 @@ import Container from "@mui/material/Container";
 import { FC, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, set } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { HOME_URL, RESET_URL } from "@router/router";
 import { container } from "tsyringe";
 import AuthService from "@service/auth";
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Alert, Backdrop, CircularProgress, Snackbar } from "@mui/material";
+import { FirebaseError } from "firebase/app";
+import { FirestoreErrorCode } from "firebase/firestore";
+import { AuthError, AuthErrorCodes } from "firebase/auth";
 
 const LOGIN_FORM_SCHEMA = Yup.object({
   email: Yup.string().email().required().label("E-mail"),
@@ -25,6 +28,8 @@ export type LoginFormData = Yup.InferType<typeof LOGIN_FORM_SCHEMA>;
 
 const LoginPage: FC = () => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -41,7 +46,10 @@ const LoginPage: FC = () => {
       await authService.login(data);
       navigate(HOME_URL);
     } catch (e) {
-      console.log(e);
+      if (e instanceof FirebaseError) {
+        setError(true);
+        setErrorMessage(e.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -55,6 +63,10 @@ const LoginPage: FC = () => {
       await authService.registerWithGoogle();
       navigate(HOME_URL);
     } catch (e) {
+      if (e instanceof FirebaseError) {
+        setError(true);
+        setErrorMessage(e.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -62,6 +74,23 @@ const LoginPage: FC = () => {
 
   return (
     <Container component="main" maxWidth="xs">
+      <Snackbar
+        open={error}
+        autoHideDuration={6000}
+        onClose={() => {
+          setError(false);
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setError(false);
+          }}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
       <Backdrop open={loading} sx={{ color: "#fff", zIndex: 99 }}>
         <CircularProgress color="primary" />
       </Backdrop>
@@ -129,7 +158,7 @@ const LoginPage: FC = () => {
           >
             Sign In with Google
           </Button>
-          
+
           <Button
             type="submit"
             fullWidth

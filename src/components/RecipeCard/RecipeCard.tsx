@@ -1,5 +1,3 @@
-import * as React from "react";
-import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -11,35 +9,68 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { UserEntity } from "@entities/UserEntity";
+import { FC } from "react";
+import { container } from "tsyringe";
+import RecipesService from "@service/recipes";
+export interface RecipeCardProps {
+  name: string;
+  description: string;
+  imgUrl: string;
+  tags: string[];
+  author: UserEntity | undefined;
+  liked: boolean;
+  timestamp: string;
+  id: string;
+}
 
-const RecipeCard = () => {
+const RecipeCard: FC<RecipeCardProps> = (props) => {
+  const { name, description, imgUrl, author, timestamp, liked, id } = props;
+  function onLikeClick() {
+    const recipesService = container.resolve(RecipesService);
+    recipesService.addLike(id);
+  }
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card
+      sx={{
+        width: "100%",
+      }}
+    >
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
+          <Avatar
+            sx={{ bgcolor: red[500] }}
+            aria-label="recipe"
+            src={author?.photoUrl ? author?.photoUrl : ""}
+          >
+            {!author?.photoUrl ? author?.name[0] : ""}
           </Avatar>
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
+        title={name}
+        subheader={timestamp.toString()}
       />
+
       <CardMedia
+        onError={(e) => {
+          e.currentTarget.src =
+            "https://reactnativecode.com/wp-content/uploads/2018/01/Error_Img.png";
+        }}
         component="img"
         height="194"
-        image="https://plus.unsplash.com/premium_photo-1675864533490-1e2a4f68192b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8ZGlzaHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-        alt="Paella dish"
+        image={imgUrl}
       />
+
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
+          {description}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
+        <IconButton
+          color={liked ? "primary" : "default"}
+          aria-label="add to favorites"
+          onClick={onLikeClick}
+        >
           <FavoriteIcon />
         </IconButton>
       </CardActions>

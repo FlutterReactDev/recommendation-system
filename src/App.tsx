@@ -1,15 +1,24 @@
-import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListItemIcon,
+} from "@mui/material";
+
 import { Frame } from "@components";
 import { FC } from "react";
-import { Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
+import { ROUTES } from "@router/router";
 
 const App: FC = () => {
   const navigation = (
     <List>
-      {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-        <ListItem key={text} disablePadding>
-          <ListItemButton>
-            <ListItemText primary={text} />
+      {ROUTES.map(({ label, icon, path }) => (
+        <ListItem key={label} disablePadding>
+          <ListItemButton component={NavLink} to={path}>
+            <ListItemIcon>{icon}</ListItemIcon>
+            <ListItemText primary={label} />
           </ListItemButton>
         </ListItem>
       ))}
